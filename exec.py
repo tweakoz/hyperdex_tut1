@@ -10,6 +10,7 @@ class child_process:
   def __init__(self,cmdlin,working_dir):
     args = shlex.split(cmdlin)
     self.cwd = working_dir
+    print "wdir<%s>" % working_dir
     self.pobj = subprocess.Popen(args,cwd=working_dir)
  	#, shell=True, stderr=sys.stdout, stdout=sys.stdout
   def join(self):
@@ -51,9 +52,10 @@ class hyp_cfg:
 class hyp_daemon:
   def __init__(self,hcfg,daenum):
     self.hcfg = weakref.ref(hcfg)
-    self.tmp_dir = "%s_daem%d"%(self.hcfg.tmp_dir.dtstring,daenum)
-    chost = self.hcfg.coordhost
-    cport = self.hcfg.coordport
+    self.tmp_dir = "%s_daem%d"%(self.hcfg().tmp_dir.dtstring,daenum)
+    call("mkdir %s"%self.tmp_dir, "./")
+    chost = self.hcfg().coordhost
+    cport = self.hcfg().coordport
     self.dae_str = "hyperdex daemon -f --listen=%s --listen-port=2012 --coordinator=%s --coordinator-port=%d --data=./"%(chost,chost,cport)
     self.dae = child_process(self.dae_str,self.tmp_dir)
   def __del__(self):
@@ -70,23 +72,19 @@ call("killall -9 -r hyperdex", "./")
 call("killall -9 -r replicant", "./")
 call("rm -rf ./run_*", "./")
 #########################################
-#hyperdex server startup
-localhost = "127.0.0.1"
-coordport = 1982
-#########################################
 
 tmp_dir_base = tmp_dir()
 coordinator = hyp_cfg(tmp_dir_base)
 time.sleep(1)
 daemons = list()
 for i in range(0,4):
-  time.sleep(2)
   d = hyp_daemon(coordinator,i)
   daemons.append(d)
 time.sleep(1)
+
 #########################################
 
-client = hyperclient.Client(localhost, coordport)
+client = hyperclient.Client(coordinator.coordhost, coordinator.coordport)
 print client
 spec = '''
 ... space phonebook 
@@ -107,12 +105,12 @@ res = client.put('phonebook', 'jsmith1', {'first': 'John', 'last': 'Smith', 'pho
 
 print res
 
-time.sleep(1)
-
 res = client.get('phonebook', 'jsmith1')
 print res
 
 client.rm_space('phonebook')
+
+time.sleep(1)
 
 #########################################
 #hyperdex server shutdown
@@ -121,5 +119,6 @@ client.rm_space('phonebook')
 #time.sleep(1)
 #coordinator.kill()
 #time.sleep(1)
+call("rm -rf ./run_*", "./")
 os.chdir("..")
 #########################################hyperdex daemon -f --listen=127.0.0.1 --listen-port=2012 --coordinator=127.0.0.1 --coordinator-port=1982 --data=./
