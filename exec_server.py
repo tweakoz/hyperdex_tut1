@@ -33,7 +33,7 @@ class hyp_daemon:
     ec.call("mkdir %s"%self.tmp_dir, cur_dir)
     chost = self.hcfg().coordhost
     cport = self.hcfg().coordport
-    self.dae_str = "hyperdex daemon -f --listen=%s --listen-port=2012 --coordinator=%s --coordinator-port=%d --data=./"%(chost,chost,cport)
+    self.dae_str = "hyperdex daemon -f --listen=127.0.0.1 --listen-port=2012 --coordinator=%s --coordinator-port=%d --data=./"%(chost,cport)
     self.dae = ec.child_process(self.dae_str,self.tmp_dir)
   def kill(self):
     self.dae.kill()    
