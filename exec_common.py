@@ -48,7 +48,7 @@ class hyp_cfg:
   def __init__(self,tdir):
     self.tmp_dir = tdir
     self.coordhost = DEX_HOST
-    self.coordport = DEX_PORT
+    self.coordport = int(DEX_PORT)
 
 #########################################
 
