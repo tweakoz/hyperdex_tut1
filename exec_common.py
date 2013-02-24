@@ -4,7 +4,7 @@ import subprocess, sys, os, string, shlex, signal, weakref
 import time, datetime
 import hyperclient
 
-DEX_PORT = 6666
+DEX_PORT = "6666"
 DEX_HOST = "127.0.0.1"
 
 if "DEX_PORT" in os.environ:

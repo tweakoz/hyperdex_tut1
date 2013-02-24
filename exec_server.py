@@ -51,7 +51,7 @@ cfg = ec.hyp_cfg(tmp_dir_base)
 coordinator = hyp_coord(cfg)
 time.sleep(1)
 daemons = list()
-for i in range(0,4):
+for i in range(1):
   d = hyp_daemon(cfg,i)
   daemons.append(d)
 time.sleep(1)
